@@ -1,11 +1,19 @@
 class ArtistsController < ApplicationController
-  get '/artists' do
-    @artists = Artist.all
-    erb :'artists/index' 
+  get '/signup' do
+    if logged_in?
+      redirect "/tweets" 
+    else
+      erb :"users/create_user"
+    end
   end
   
-  get '/artists/:slug' do
-    @artist = Artist.find_by_slug(params[:slug])
-    erb :'artists/show'
+  post '/signup' do 
+    @user = User.new(username: params[:username], password: params[:password], email: params[:email])
+    if @user.save
+      session[:user_id] = @user.id
+      redirect '/tweets'
+    else 
+      redirect '/signup'
+    end
   end
 end
